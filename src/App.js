@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import emailjs from 'emailjs-com';
 import './App.css';
 import './Coin.css';
 import Coin from './Coin';
@@ -9,15 +10,27 @@ function App() {
   const[coins, setCoins] = useState([]);
   const[search, setSearch] = useState('')
   
+  function sendEmail(e) {
+    e.preventDefault();
+
+    emailjs.sendForm('service_6xz7w7g', 'krypto_app', e.target, 'user_4EI65dbaPnvNhqZigs2gh')
+      .then((result) => {
+          console.log(result.text);
+      }, (error) => {
+          console.log(error.text);
+      });
+      e.target.reset()
+  }
+
   useEffect (() => {
-    axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=inr&order=market_cap_desc&per_page=50&page=1&sparkline=false&price_change_percentage=1h')
+    axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1h')
     .then(res => {
       setCoins(res.data)
       console.log(res.data)
     }).catch(error => console.log(error))
     const interval = setInterval(() => {
       console.log('Refresh in every 30secs!');
-      axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=inr&order=market_cap_desc&per_page=50&page=1&sparkline=false&price_change_percentage=1h')
+      axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1h')
     .then(res => {
       setCoins(res.data)
       console.log(res.data)
@@ -39,7 +52,16 @@ function App() {
       <br></br>
       <br></br>
       <div className="coin-search">
-        
+      {/* <form className="contact-form" onSubmit={sendEmail}>
+      <input type="hidden" name="contact_number" />
+      <label>Name</label>
+      <input type="text" name="to_name" />
+      <label>Email</label>
+      <input type="email" name="from_name" />
+      <label>Message</label>
+      <textarea name="message" />
+      <input type="submit" value="Send" />
+    </form> */}
         <form>
           <input type="text" placeholder="Search a currency" className="coin-input" onChange={handleChange}/>
         </form>
